@@ -17,7 +17,8 @@ htmlcov/
 
 # Generated graphs
 impactgraph.json
-examples/demo/impactgraph.json
+datagraph.json
+
 
 # OS / editor
 .DS_Store

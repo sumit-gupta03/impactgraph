@@ -3,55 +3,41 @@ requires = ["setuptools>=68", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "datagraph"
-version = "0.5.0"
-description = "AI-powered Change Impact Graph for data and code systems: answer 'if I change this, what can break?'"
+name = "impactgraph"
+version = "0.6.0"
+description = "Pre-merge safety net: what breaks if I merge this? Blast radius, risk, owners and a test plan on every PR - built on datagraph."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Arati" }]
-keywords = [
-    "change-impact",
-    "lineage",
-    "dbt",
-    "sql",
-    "openlineage",
-    "dependency-graph",
-    "data-engineering",
-    "impact-analysis",
-    "mcp",
-]
+authors = [{ name = "Sumit Gupta" }]
+keywords = ["impact-analysis", "blast-radius", "pull-request", "ci", "dependency-graph", "dbt", "lineage", "change-management"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
-    "Intended Audience :: Developers",
-    "License :: OSI Approved :: MIT License",
-    "Programming Language :: Python :: 3",
-    "Programming Language :: Python :: 3.9",
-    "Programming Language :: Python :: 3.10",
-    "Programming Language :: Python :: 3.11",
-    "Programming Language :: Python :: 3.12",
-    "Programming Language :: Python :: 3.13",
-    "Topic :: Software Development :: Quality Assurance",
-    "Topic :: Database",
+  "Development Status :: 4 - Beta",
+  "Intended Audience :: Developers",
+  "License :: OSI Approved :: MIT License",
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3 :: Only",
+  "Topic :: Software Development :: Quality Assurance",
+  "Topic :: Software Development :: Version Control :: Git",
 ]
 dependencies = [
-    "networkx>=3.0",
-    "rich>=13.0",
+  "datagraph>=0.5.0",
 ]
 
 [project.optional-dependencies]
-sql = ["sqlglot>=20.0"]
-ai = ["anthropic>=0.40.0"]
-mcp = ["mcp>=1.0; python_version >= '3.10'"]
-yaml = ["pyyaml>=6.0"]
-all = ["sqlglot>=20.0", "anthropic>=0.40.0", "mcp>=1.0; python_version >= '3.10'", "pyyaml>=6.0"]
-dev = ["pytest>=7.0", "sqlglot>=20.0", "pyyaml>=6.0"]
+sql = ["datagraph[sql]"]
+yaml = ["datagraph[yaml]"]
+ai = ["datagraph[ai]"]
+all = ["datagraph[all]"]
+dev = ["datagraph[sql,yaml]", "pytest>=7"]
 
 [project.scripts]
-datagraph = "datagraph.cli:main"
+impactgraph = "impactgraph.cli:main"
 
 [project.urls]
-Homepage = "https://github.com/sumit-gupta03/datagraph"
+Homepage = "https://github.com/sumit-gupta03/impactgraph"
+Engine = "https://github.com/sumit-gupta03/datagraph"
+Issues = "https://github.com/sumit-gupta03/impactgraph/issues"
 
 [tool.setuptools.packages.find]
 where = ["src"]

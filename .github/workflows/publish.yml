@@ -1,10 +1,11 @@
 # Publishes to PyPI when a version tag (v1.2.3) is pushed, using PyPI "trusted
 # publishing" (no API token stored anywhere). One-time setup on pypi.org:
 #   Your projects -> Publishing -> add a "pending publisher":
-#     PyPI project name: datagraph
-#     Owner: sumit-gupta03   Repository: datagraph
+#     PyPI project name: impactgraph
+#     Owner: sumit-gupta03   Repository: impactgraph
 #     Workflow name: publish.yml   Environment name: pypi
-# Then:  git tag v0.5.0 && git push origin v0.5.0
+# Then set the repository variable PYPI_TRUSTED_PUBLISHER=true and
+#   git tag v0.6.0 && git push origin v0.6.0
 name: Publish to PyPI
 
 on:
@@ -21,6 +22,8 @@ jobs:
           python-version: "3.12"
       - name: Install and test
         run: |
+          python -m pip install "datagraph[sql,yaml] @ git+https://github.com/sumit-gupta03/datagraph@main" \
+            || python -m pip install "datagraph[sql,yaml] @ git+https://github.com/sumit-gupta03/impactgraph@v0.5.0"
           python -m pip install -e ".[dev]"
           python -m pytest -q
       - name: Build sdist and wheel
@@ -36,7 +39,7 @@ jobs:
     needs: build
     runs-on: ubuntu-latest
     permissions:
-      contents: write     # GitHub release with the built artifacts
+      contents: write
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -49,15 +52,12 @@ jobs:
           generate_release_notes: true
 
   publish:
-    # Runs only after you set the repository variable PYPI_TRUSTED_PUBLISHER=true
-    # (Settings -> Secrets and variables -> Actions -> Variables), i.e. once the
-    # trusted publisher above is configured on pypi.org.
     if: vars.PYPI_TRUSTED_PUBLISHER == 'true'
     needs: build
     runs-on: ubuntu-latest
     environment: pypi
     permissions:
-      id-token: write     # trusted publishing — no token stored anywhere
+      id-token: write
     steps:
       - uses: actions/download-artifact@v4
         with:

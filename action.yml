@@ -1,21 +1,37 @@
-name: "datagraph — change impact on pull requests"
-description: "Build the impact graph and post the blast radius of the PR's changes as a comment."
-author: "datagraph"
+name: "impactgraph — what breaks if I merge this?"
+description: "Posts the blast radius, risk level, owners and test plan of a pull request as a comment; optionally fails the job above a risk level."
+author: "sumit-gupta03"
 branding:
   icon: "git-branch"
   color: "orange"
 
 inputs:
   repo-path:
-    description: "Path to the Python code to scan"
+    description: "Code directory to scan (Python / JS). Default: repository root"
     required: false
     default: "."
   dbt-manifest:
-    description: "Path to a dbt manifest.json (optional)"
+    description: "dbt manifest.json (optional)"
+    required: false
+    default: ""
+  dbt-catalog:
+    description: "dbt catalog.json (optional, expands select * in column lineage)"
     required: false
     default: ""
   sql-dir:
     description: "Directory of .sql files (optional)"
+    required: false
+    default: ""
+  airflow:
+    description: "Airflow dags/ directory (optional)"
+    required: false
+    default: ""
+  lambda:
+    description: "serverless.yml / SAM / CloudFormation template (optional)"
+    required: false
+    default: ""
+  js:
+    description: "JS/TS directory (optional)"
     required: false
     default: ""
   openlineage:
@@ -34,52 +50,54 @@ inputs:
     description: "Fail the job when risk is at or above this level (LOW|MEDIUM|HIGH|CRITICAL|NONE)"
     required: false
     default: "NONE"
+  no-inferred:
+    description: "Use only artifact-backed edges (true/false)"
+    required: false
+    default: "false"
   github-token:
     description: "Token used to post the PR comment"
     required: false
     default: ${{ github.token }}
 
+outputs:
+  level:
+    description: "Risk level of the PR (LOW|MEDIUM|HIGH|CRITICAL)"
+    value: ${{ steps.impact.outputs.level }}
+
 runs:
   using: "composite"
   steps:
-    - name: Install datagraph
+    - name: Install impactgraph
       shell: bash
-      run: python -m pip install --quiet "datagraph[sql,yaml]"
-
-    - name: Build graph
-      shell: bash
-      run: |
-        args="--repo '${{ inputs.repo-path }}'"
-        [ -n "${{ inputs.dbt-manifest }}" ] && args="$args --dbt-manifest '${{ inputs.dbt-manifest }}'"
-        [ -n "${{ inputs.sql-dir }}" ] && args="$args --sql '${{ inputs.sql-dir }}'"
-        [ -n "${{ inputs.openlineage }}" ] && args="$args --openlineage '${{ inputs.openlineage }}'"
-        [ -n "${{ inputs.lineage-file }}" ] && args="$args --lineage-file '${{ inputs.lineage-file }}'"
-        eval datagraph build $args -o datagraph.json
+      run: python -m pip install --quiet "impactgraph[sql,yaml]"
 
     - name: Compute impact of this PR
       id: impact
       shell: bash
       run: |
         git fetch origin "${{ github.base_ref }}" --depth=1 || true
-        datagraph diff --repo "${{ inputs.repo-path }}" --base "${{ inputs.base-ref }}" --graph datagraph.json --json > impact.json || true
-        datagraph diff --repo "${{ inputs.repo-path }}" --base "${{ inputs.base-ref }}" --graph datagraph.json > impact.txt 2>/dev/null || true
+        args="--repo . --code '${{ inputs.repo-path }}' --base '${{ inputs.base-ref }}'"
+        [ -n "${{ inputs.dbt-manifest }}" ] && args="$args --dbt-manifest '${{ inputs.dbt-manifest }}'"
+        [ -n "${{ inputs.dbt-catalog }}" ] && args="$args --dbt-catalog '${{ inputs.dbt-catalog }}'"
+        [ -n "${{ inputs.sql-dir }}" ] && args="$args --sql '${{ inputs.sql-dir }}'"
+        [ -n "${{ inputs.airflow }}" ] && args="$args --airflow '${{ inputs.airflow }}'"
+        [ -n "${{ inputs.lambda }}" ] && args="$args --lambda '${{ inputs.lambda }}'"
+        [ -n "${{ inputs.js }}" ] && args="$args --js '${{ inputs.js }}'"
+        [ -n "${{ inputs.openlineage }}" ] && args="$args --openlineage '${{ inputs.openlineage }}'"
+        [ -n "${{ inputs.lineage-file }}" ] && args="$args --lineage-file '${{ inputs.lineage-file }}'"
+        [ "${{ inputs.no-inferred }}" = "true" ] && args="$args --no-inferred"
+        eval impactgraph check $args --save-graph impactgraph.json --format json -o impact.json || true
+        eval impactgraph check $args --graph impactgraph.json --format markdown -o comment.md || true
         level=$(python -c "import json;print(json.load(open('impact.json')).get('risk',{}).get('level','LOW'))" 2>/dev/null || echo LOW)
         echo "level=$level" >> "$GITHUB_OUTPUT"
+        cat comment.md >> "$GITHUB_STEP_SUMMARY" || true
 
     - name: Comment on PR
       if: github.event_name == 'pull_request'
       shell: bash
       env:
         GH_TOKEN: ${{ inputs.github-token }}
-      run: |
-        {
-          echo "### ⚠ datagraph — change impact (risk: **${{ steps.impact.outputs.level }}**)"
-          echo
-          echo '```'
-          cat impact.txt
-          echo '```'
-        } > comment.md
-        gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md || echo "could not post comment"
+      run: gh pr comment "${{ github.event.pull_request.number }}" --body-file comment.md || echo "could not post comment"
 
     - name: Enforce risk threshold
       shell: bash
