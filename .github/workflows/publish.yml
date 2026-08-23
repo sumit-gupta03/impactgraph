@@ -5,7 +5,7 @@
 #     Owner: sumit-gupta03   Repository: impactgraph
 #     Workflow name: publish.yml   Environment name: pypi
 # Then set the repository variable PYPI_TRUSTED_PUBLISHER=true and
-#   git tag v0.7.0 && git push origin v0.7.0
+#   git tag v0.7.1 && git push origin v0.7.1
 name: Publish to PyPI
 
 on:
@@ -22,7 +22,7 @@ jobs:
           python-version: "3.12"
       - name: Install and test
         run: |
-          python -m pip install "datagraph[sql,yaml] @ git+https://github.com/sumit-gupta03/datagraph@main" \
+          python -m pip install "datagraph-core[sql,yaml] @ git+https://github.com/sumit-gupta03/datagraph@main" \
             || python -m pip install "datagraph[sql,yaml] @ git+https://github.com/sumit-gupta03/impactgraph@v0.5.0"
           python -m pip install -e ".[dev]"
           python -m pytest -q

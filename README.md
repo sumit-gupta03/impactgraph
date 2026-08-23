@@ -136,7 +136,7 @@ and the default `GITHUB_TOKEN`. See the [datagraph security notes](https://githu
 
 ```bash
 git clone https://github.com/sumit-gupta03/impactgraph && cd impactgraph
-pip install -e ".[dev]"     # needs datagraph (PyPI, or pip install git+https://github.com/sumit-gupta03/datagraph)
+pip install -e ".[dev]"     # pulls datagraph-core from PyPI (the engine; import name datagraph)
 pytest
 ```
 
