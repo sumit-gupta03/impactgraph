@@ -5,7 +5,7 @@
 #     Owner: sumit-gupta03   Repository: impactgraph
 #     Workflow name: publish.yml   Environment name: pypi
 # Then set the repository variable PYPI_TRUSTED_PUBLISHER=true and
-#   git tag v0.7.1 && git push origin v0.7.1
+#   git tag v0.7.2 && git push origin v0.7.2
 name: Publish to PyPI
 
 on:
