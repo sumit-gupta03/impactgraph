@@ -1,6 +1,23 @@
-# impactgraph
+<h1 align="center">impactgraph</h1>
 
-**What breaks if I merge this?** — a pre-merge safety net for code *and* data.
+<p align="center"><b>What breaks if I merge this?</b> — a pre-merge safety net for code <i>and</i> data, built on <a href="https://github.com/sumit-gupta03/datagraph">datagraph</a>.</p>
+
+<p align="center">
+  <a href="https://pypi.org/project/impactgraph/"><img alt="PyPI" src="https://img.shields.io/pypi/v/impactgraph?color=orange"></a>
+  <a href="https://pypi.org/project/impactgraph/"><img alt="Python" src="https://img.shields.io/pypi/pyversions/impactgraph"></a>
+  <a href="https://github.com/sumit-gupta03/impactgraph/actions/workflows/ci.yml"><img alt="CI" src="https://github.com/sumit-gupta03/impactgraph/actions/workflows/ci.yml/badge.svg"></a>
+  <a href="https://github.com/sumit-gupta03/impactgraph/blob/main/LICENSE"><img alt="License" src="https://img.shields.io/badge/license-MIT-green"></a>
+</p>
+
+```mermaid
+flowchart LR
+    classDef changed fill:#ffe0b2,stroke:#e65100,stroke-width:2px
+    classDef hit fill:#fde2e2,stroke:#c62828
+    G["git diff<br/>(PR vs base)"] --> F["changed functions<br/>models · files"]:::changed
+    F -->|graph walk| T["tables · columns"]:::hit --> M["dbt models"]:::hit --> D["dashboards · APIs"]:::hit
+    D --> R["risk level · owners to notify<br/>test plan"]
+    R --> O["PR comment (Markdown)<br/>JSON · HTML · exit code (--fail-on)"]
+```
 
 `impactgraph` takes the git diff of a pull request, maps it onto a deterministic dependency graph
 (Python/JS functions → Lambdas/APIs → tables → dbt models → columns → dashboards) and reports the
