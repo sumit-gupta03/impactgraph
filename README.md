@@ -125,6 +125,13 @@ Copy `skills/impactgraph/` to `.claude/skills/impactgraph/` (or `~/.claude/skill
 | Ships | `check` / `pr` CLI, GitHub Action, skill; passes everything else through | the engine: extractors, lineage, relationships, profiling, wiki/context, MCP, plugins |
 | Graph & node ids | identical — a graph built by one is readable by the other | |
 
+## Security
+
+impactgraph inherits datagraph's security model (deterministic core, LLM only explains, prompts wrap repo/warehouse text as
+untrusted data, DSN passwords never stored or logged, profiling masks sensitive columns, quoted identifiers, escaped HTML).
+The PR comment is plain Markdown built from node names in *your* repository; the GitHub Action needs only `pull-requests: write`
+and the default `GITHUB_TOKEN`. See the [datagraph security notes](https://github.com/sumit-gupta03/datagraph#security).
+
 ## Development
 
 ```bash
