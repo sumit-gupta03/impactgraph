@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "impactgraph"
-version = "0.7.2"
+version = "0.7.3"
 description = "Pre-merge safety net: what breaks if I merge this? Blast radius, risk, owners and a test plan on every PR - built on datagraph."
 readme = "README.md"
 requires-python = ">=3.9"
@@ -21,7 +21,7 @@ classifiers = [
   "Topic :: Software Development :: Version Control :: Git",
 ]
 dependencies = [
-  "datagraph-core>=0.8.2",
+  "datagraph-core>=0.8.4",
 ]
 
 [project.optional-dependencies]

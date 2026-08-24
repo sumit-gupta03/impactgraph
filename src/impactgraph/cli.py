@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 from typing import List, Optional
 
-from .core import BUILD_FLAGS, LEVELS, check, to_markdown
+from .core import BUILD_FLAGS, LEVELS, check, safe_console_text, to_markdown
 
 _OWN = {"check", "pr"}
 
@@ -78,9 +78,9 @@ def _run_check(args: argparse.Namespace) -> int:
 
     if text is not None:
         if args.output:
-            Path(args.output).write_text(text, encoding="utf-8")
+            Path(args.output).write_text(text, encoding="utf-8")   # always UTF-8 on disk
         else:
-            print(text)
+            print(safe_console_text(text))                          # never crash a legacy console
     else:
         from datagraph.report import render_analysis
 

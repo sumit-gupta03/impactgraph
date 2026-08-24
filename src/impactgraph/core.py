@@ -15,6 +15,28 @@ from datagraph import ImpactAnalysis, ImpactGraph, analyze_impact, changed_node_
 
 LEVELS = ["LOW", "MEDIUM", "HIGH", "CRITICAL"]
 
+#: legacy Windows consoles (cp1252) cannot encode the emoji used in the Markdown report
+_ASCII_FALLBACK = {"🟢": "[LOW]", "🟡": "[MEDIUM]", "🟠": "[HIGH]",
+                   "🔴": "[CRITICAL]", "✅": "[OK]", "⚠": "[!]", "→": "->",
+                   "—": "-", "–": "-", "·": "*", "…": "..."}
+
+
+def safe_console_text(text: str, stream=None) -> str:
+    """Return ``text`` in a form the current console can encode.
+
+    Files are always written as UTF-8 (GitHub renders the emoji); only terminal
+    output is downgraded, so ``impactgraph pr`` never dies on a cp1252 console.
+    """
+    encoding = getattr(stream or sys.stdout, "encoding", None) or "utf-8"
+    try:
+        text.encode(encoding)
+        return text
+    except (UnicodeEncodeError, LookupError):
+        for glyph, plain in _ASCII_FALLBACK.items():
+            text = text.replace(glyph, plain)
+        return text.encode(encoding, errors="replace").decode(encoding, errors="replace")
+
+
 # impactgraph check flag  ->  datagraph build flag
 BUILD_FLAGS: Dict[str, str] = {
     "dbt_manifest": "--dbt-manifest",

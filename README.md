@@ -34,6 +34,11 @@ install gives you both.
 git diff  ──►  changed functions / models / files  ──►  graph walk  ──►  risk · owners · tests
 ```
 
+> **New here?** Run the guided tour - it creates a demo git repo, makes a change and shows every feature:
+> ```bash
+> python examples/example_impactgraph.py
+> ```
+
 ## Install
 
 ```bash
