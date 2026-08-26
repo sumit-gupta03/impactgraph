@@ -167,7 +167,7 @@ History: versions ≤ 0.5 of this repository contained the whole engine; it now 
 
 ## Authors
 
-Sumit Gupta and Nitish Pradhan.
+Sumit Kumar Gupta and Nitish Pradhan.
 
 ## License
 

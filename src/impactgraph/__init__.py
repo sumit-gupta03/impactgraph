@@ -14,5 +14,5 @@ from datagraph import __all__ as _dg_all
 
 from .core import CheckResult, check, to_markdown
 
-__version__ = "0.7.4"
+__version__ = "0.7.5"
 __all__ = list(_dg_all) + ["CheckResult", "check", "to_markdown", "__version__"]

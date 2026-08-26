@@ -4,12 +4,12 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "impactgraph"
-version = "0.7.4"
+version = "0.7.5"
 description = "Pre-merge safety net: what breaks if I merge this? Blast radius, risk, owners and a test plan on every PR - built on datagraph."
 readme = "README.md"
 requires-python = ">=3.9"
 license = { text = "MIT" }
-authors = [{ name = "Sumit Gupta" }, { name = "Nitish Pradhan" }]
+authors = [{ name = "Sumit Kumar Gupta" }, { name = "Nitish Pradhan" }]
 keywords = ["impact-analysis", "blast-radius", "pull-request", "ci", "dependency-graph", "dbt", "lineage", "change-management"]
 classifiers = [
   "Development Status :: 4 - Beta",
