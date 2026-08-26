@@ -165,6 +165,10 @@ pytest
 History: versions ≤ 0.5 of this repository contained the whole engine; it now lives in
 [datagraph](https://github.com/sumit-gupta03/datagraph) and impactgraph (≥ 0.6) is the thin PR-focused layer.
 
+## Authors
+
+Sumit Gupta and Nitish Pradhan.
+
 ## License
 
 MIT
