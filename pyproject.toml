@@ -4,9 +4,9 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "impactgraph"
-version = "0.7.5"
+version = "0.7.6"
 description = "Pre-merge safety net: what breaks if I merge this? Blast radius, risk, owners and a test plan on every PR - built on datagraph."
-readme = "README.md"
+readme = "README.pypi.md"   # generated: diagram as an image (PyPI cannot render Mermaid)
 requires-python = ">=3.9"
 license = { text = "MIT" }
 authors = [{ name = "Sumit Kumar Gupta" }, { name = "Nitish Pradhan" }]
